@@ -2,6 +2,7 @@
 import os
 import sys
 import platform
+import time
 import zipfile
 import requests
 import urllib3
@@ -60,6 +61,8 @@ remoteVer3 = json.loads(response3).get('tag_name')
 # compare local and remote
 if remoteVer1 == mainver and remoteVer2 == configGeneratorver and remoteVer3 == Updaterver:
     print('You have the latest release.')
+    time.sleep(2)
+    sys.exit()
 else:
     print('One or more modules\' newer version has been released.')
     print()
@@ -128,7 +131,7 @@ else:
     print()
 
     if sysType == 'win':
-        os.system('update.bat')
+        os.system('start update.bat')
     elif sysType == 'linux' or sysType == 'osx':
         os.system('update.sh')
     sys.exit()
