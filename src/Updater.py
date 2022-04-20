@@ -111,7 +111,7 @@ else:
             sys.exit()
     else:
         if remoteVer2 != configGeneratorver:
-            download_url = 'https://github.com/qhy040404/Library-reservation-configGenerator/releases/download/' + remoteVer1 + '/ConfigGenerator-' + sysType + '.zip'
+            download_url = 'https://github.com/qhy040404/Library-reservation-configGenerator/releases/download/' + remoteVer2 + '/ConfigGenerator-' + sysType + '.zip'
             path = 'temp.zip'
             try:
                 wget.download(download_url, path)
@@ -120,7 +120,7 @@ else:
                 print(e)
                 sys.exit()
         if remoteVer3 != Updaterver:
-            download_url = 'https://github.com/qhy040404/Library-reservation-updater/releases/download/' + remoteVer1 + '/Updater-' + sysType + '.zip'
+            download_url = 'https://github.com/qhy040404/Library-reservation-updater/releases/download/' + remoteVer3 + '/Updater-' + sysType + '.zip'
             path = 'temp.zip'
             try:
                 wget.download(download_url, path)
