@@ -1,0 +1,292 @@
+name: Publish
+
+on: [push, pull_request]
+
+env:
+  CONFIGURATION: Release
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_NOLOGO: true
+  DOTNET_SDK_VERSION: 6.0.x
+  NET_CORE_VERSION: net6.0
+
+jobs:
+  publish:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3.0.1
+      with:
+        submodules: recursive
+
+    - name: Verify Python and pip packages (win&linux)
+      if: startsWith(matrix.os, 'windows-') || startsWith(matrix.os, 'ubuntu-')
+      run: |
+        python --version
+        pip install requests
+        pip install pyinstaller
+
+    - name: Verify Python and pip packages (mac)
+      if: startsWith(matrix.os, 'macos-')
+      run: |
+        python3 --version
+        python3 -m pip install requests
+        python3 -m pip install pyinstaller
+
+    - name: Publish Updater on Unix
+      if: startsWith(matrix.os, 'macos-') || startsWith(matrix.os, 'ubuntu-')
+      env:
+        VARIANTS: linux osx
+      shell: sh
+      run: |
+        pyinstaller -F src/Updater.py --distpath=out/
+
+    - name: Publish Updater on Windows
+      if: startsWith(matrix.os, 'windows-')
+      run: |
+        Set-StrictMode -Version Latest
+        New-Item -Name out -type "directory"
+        pyinstaller -i src/logo.ico -F --version-file src/version src/Updater.py --distpath=out/
+
+    - name: Create zip file on Linux
+      if: startsWith(matrix.os, 'ubuntu-')
+      shell: sh
+      run: |
+        cp "src/config.json" "out/"
+        cp "src/update.sh" "out/"
+
+        # By default use fastest compression
+        seven_zip_args="-mx=1"
+        zip_args="-1"
+
+        # Include extra logic for builds marked for release
+        case "$GITHUB_REF" in
+            "refs/tags/"*)
+                # Tweak compression args for release publishing
+                seven_zip_args="-mx=9 -mfb=258 -mpass=15"
+                zip_args="-9"
+        esac
+
+        case "$(uname -s)" in
+            "Darwin")
+                # We prefer to use zip on OS X as 7z implementation on that OS doesn't handle file permissions (chmod +x)
+                if command -v zip >/dev/null; then
+                    (
+                        cd "${GITHUB_WORKSPACE}/out"
+                        zip -q -r $zip_args "../Updater-linux.zip" .
+                    )
+                elif command -v 7z >/dev/null; then
+                    7z a -bd -slp -tzip -mm=Deflate $seven_zip_args "out/Updater-linux.zip" "${GITHUB_WORKSPACE}/out/*"
+                else
+                    echo "ERROR: No supported zip tool!"
+                    return 1
+                fi
+                ;;
+            *)
+                if command -v 7z >/dev/null; then
+                    7z a -bd -slp -tzip -mm=Deflate $seven_zip_args "out/Updater-linux.zip" "${GITHUB_WORKSPACE}/out/*"
+                elif command -v zip >/dev/null; then
+                    (
+                        cd "${GITHUB_WORKSPACE}/out"
+                        zip -q -r $zip_args "../Updater-linux.zip" .
+                    )
+                else
+                    echo "ERROR: No supported zip tool!"
+                    return 1
+                fi
+                ;;
+        esac
+
+    - name: Create zip file on macOS
+      if: startsWith(matrix.os, 'macos-')
+      shell: sh
+      run: |
+        cp "src/config.json" "out/"
+        cp "src/update.sh" "out/"
+
+        # By default use fastest compression
+        seven_zip_args="-mx=1"
+        zip_args="-1"
+
+        # Include extra logic for builds marked for release
+        case "$GITHUB_REF" in
+            "refs/tags/"*)
+                # Tweak compression args for release publishing
+                seven_zip_args="-mx=9 -mfb=258 -mpass=15"
+                zip_args="-9"
+        esac
+
+        case "$(uname -s)" in
+            "Darwin")
+                # We prefer to use zip on OS X as 7z implementation on that OS doesn't handle file permissions (chmod +x)
+                if command -v zip >/dev/null; then
+                    (
+                        cd "${GITHUB_WORKSPACE}/out"
+                        zip -q -r $zip_args "../Updater-osx.zip" .
+                    )
+                elif command -v 7z >/dev/null; then
+                    7z a -bd -slp -tzip -mm=Deflate $seven_zip_args "out/Updater-osx.zip" "${GITHUB_WORKSPACE}/out/*"
+                else
+                    echo "ERROR: No supported zip tool!"
+                    return 1
+                fi
+                ;;
+            *)
+                if command -v 7z >/dev/null; then
+                    7z a -bd -slp -tzip -mm=Deflate $seven_zip_args "out/Updater-osx.zip" "${GITHUB_WORKSPACE}/out/*"
+                elif command -v zip >/dev/null; then
+                    (
+                        cd "${GITHUB_WORKSPACE}/out"
+                        zip -q -r $zip_args "../Updater-osx.zip" .
+                    )
+                else
+                    echo "ERROR: No supported zip tool!"
+                    return 1
+                fi
+                ;;
+        esac
+
+    - name: Create zip file on Windows
+      if: startsWith(matrix.os, 'windows-')
+      shell: pwsh
+      run: |
+        Copy-Item "src\config.json" "out"
+        Copy-Item "src\update.bat" "out"
+        # By default use fastest compression
+        $compressionArgs = '-mx=1'
+
+        # Include extra logic for builds marked for release
+        if ($env:GITHUB_REF -like 'refs/tags/*') {
+            # Tweak compression args for release publishing
+            $compressionArgs = '-mx=9', '-mfb=258', '-mpass=15'
+        }
+
+        7z a -bd -slp -tzip -mm=Deflate $compressionArgs "out\Updater-win.zip" "$env:GITHUB_WORKSPACE\out\*"
+
+        if ($LastExitCode -ne 0) {
+            throw "Last command failed."
+        }
+
+
+    - name: Upload Updater-linux
+      if: startsWith(matrix.os, 'ubuntu-')
+      continue-on-error: true
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: ${{ matrix.os }}_Updater-linux
+        path: out/Updater-linux.zip
+
+    - name: Upload Updater-osx
+      if: startsWith(matrix.os, 'macos-')
+      continue-on-error: true
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: ${{ matrix.os }}_Updater-osx
+        path: Updater-osx.zip
+
+    - name: Upload Updater-win
+      if: startsWith(matrix.os, 'windows-')
+      continue-on-error: true
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: ${{ matrix.os }}_Updater-win
+        path: out/Updater-win.zip
+
+  release:
+    if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
+    needs: publish
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3.0.1
+
+    - name: Download Updater-osx artifact from macos-latest
+      uses: actions/download-artifact@v3.0.0
+      with:
+        name: macos-latest_Updater-osx
+        path: upload
+
+    - name: Download Updater-linux artifact from ubuntu-latest
+      uses: actions/download-artifact@v3.0.0
+      with:
+        name: ubuntu-latest_Updater-linux
+        path: upload
+
+    - name: Download Updater-win artifact from windows-latest
+      uses: actions/download-artifact@v3.0.0
+      with:
+        name: windows-latest_Updater-win
+        path: upload
+
+    - name: Generate SHA-512 checksums
+      shell: sh
+      run: |
+        set -eu
+        (
+            cd "upload"
+
+            sha512sum *.zip > SHA512SUMS
+        )
+
+    - name: Upload SHA512SUMS
+      continue-on-error: true
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: SHA512SUMS
+        path: upload/SHA512SUMS
+
+    - name: Create Updater GitHub release
+      id: github_release
+      uses: actions/create-release@v1.1.4
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: v${{ github.ref }}
+        prerelease: true
+
+    - name: Upload Updater-linux to GitHub release
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.github_release.outputs.upload_url }}
+        asset_path: upload/Updater-linux.zip
+        asset_name: Updater-linux.zip
+        asset_content_type: application/zip
+
+    - name: Upload Updater-osx to GitHub release
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.github_release.outputs.upload_url }}
+        asset_path: upload/Updater-osx.zip
+        asset_name: Updater-osx.zip
+        asset_content_type: application/zip
+
+    - name: Upload Updater-win to GitHub release
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.github_release.outputs.upload_url }}
+        asset_path: upload/Updater-win.zip
+        asset_name: Updater-win.zip
+        asset_content_type: application/zip
+
+    - name: Upload SHA512SUMS to GitHub release
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.github_release.outputs.upload_url }}
+        asset_path: upload/SHA512SUMS
+        asset_name: SHA512SUMS
+        asset_content_type: text/plain

@@ -1,4 +1,6 @@
 {
   "channel": "stable",
-  "{module1}": "1.0.0.0"
+  "main": "3.0.0.0",
+  "configGenerator": "2.2.0.1",
+  "Updater": "1.0.0.0"
 }
