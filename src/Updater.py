@@ -125,11 +125,10 @@ else:
 
 
     un_zip('temp.zip')
+    print()
 
     if sysType == 'win':
         os.system('update.bat')
     elif sysType == 'linux' or sysType == 'osx':
         os.system('update.sh')
-    print()
-    print()
     sys.exit()
