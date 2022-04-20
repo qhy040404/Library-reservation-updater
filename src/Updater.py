@@ -31,7 +31,8 @@ github_release_api_url2 = 'https://api.github.com/repos/qhy040404/Library-reserv
 github_release_api_url3 = 'https://api.github.com/repos/qhy040404/Library-reservation-updater/releases/latest'
 
 # delete old files
-shutil.rmtree('update')
+if os.path.exists('update'):
+    shutil.rmtree('update')
 
 # read config.json
 with open("config.json","r") as conf:
