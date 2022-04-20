@@ -1,4 +1,4 @@
-name: Compile-and-Test-CI
+name: Compile-CI
 
 on:
   push:
@@ -20,11 +20,3 @@ jobs:
         with:
           language: python
           source: Updater
-
-      - name: test
-        shell: sh
-        run: |
-          cd src
-          cp "config.conf" "dist/"
-          cd dist
-          ./main
