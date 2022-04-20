@@ -131,5 +131,5 @@ else:
     if sysType == 'win':
         os.system('start update.bat')
     elif sysType == 'linux' or sysType == 'osx':
-        os.system('update.sh')
+        os.system('sh update.sh')
     sys.exit()
