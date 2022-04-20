@@ -1,6 +1,6 @@
 {
   "channel": "stable",
   "main": "3.0.0.0",
-  "configGenerator": "2.2.0.1",
-  "Updater": "1.0.0.4"
+  "configGenerator": "2.2.0.0",
+  "Updater": "1.1.0.0"
 }
