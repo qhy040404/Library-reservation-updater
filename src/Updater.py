@@ -3,6 +3,7 @@ import os
 import sys
 import platform
 import time
+import shutil
 import zipfile
 import requests
 import urllib3
@@ -28,6 +29,9 @@ urllib3.disable_warnings()
 github_release_api_url1 = 'https://api.github.com/repos/qhy040404/DLUT-library-auto-reservation/releases'
 github_release_api_url2 = 'https://api.github.com/repos/qhy040404/Library-reservation-configGenerator/releases'
 github_release_api_url3 = 'https://api.github.com/repos/qhy040404/Library-reservation-updater/releases/latest'
+
+# delete old files
+shutil.rmtree('update')
 
 # read config.json
 with open("config.json","r") as conf:
@@ -126,6 +130,7 @@ else:
 
 
     un_zip('temp.zip')
+    os.remove('update/config.conf')
     print()
 
     if sysType == 'win':
