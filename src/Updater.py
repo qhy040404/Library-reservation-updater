@@ -130,4 +130,6 @@ else:
         os.system('update.bat')
     elif sysType == 'linux' or sysType == 'osx':
         os.system('update.sh')
+    print()
+    print()
     sys.exit()
