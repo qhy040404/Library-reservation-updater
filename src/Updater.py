@@ -131,7 +131,8 @@ else:
 
 
     un_zip('temp.zip')
-    os.remove('update/config.conf')
+    if os.path.exists('update/config.conf'):
+        os.remove('update/config.conf')
     print()
 
     if sysType == 'win':

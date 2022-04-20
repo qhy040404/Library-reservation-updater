@@ -11,7 +11,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;[Updater-template](https://github.com/qhy040404/Updater-Template)
 
 ## Parameter / 参数
-- 用户可修改的参数仅限于```channel```参数
+- 用户可修改的参数仅限于```channel```参数，**强烈建议不修改**
     - ```stable```为稳定版
     - ```beta```为预发行版本
         > 大不了bug横飞
