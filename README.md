@@ -1,17 +1,17 @@
-# Updater Template
-This is a template of updater.
-## Use
-- Press ```Use this template```
-- You need to modify data in ```config.json``` and ```Updater.py```
-## Detail
-- ```config.json```
-    - ```channel``` : ```stable``` or ```beta```
-        - ```stable``` requests the latest release version
-        - ```beta``` requests the latest pre-release version
-    - ```{module1}``` is the module name which is defined by you
-    - Just add more module if you have more module in one project.
-- ```Updater.py```
-    - ```{owner}``` is your GitHub name
-    - ```{repo}``` is your repository name
-    - ```{module1}``` is the local version defined in ```config.json```
-    - ```{package_name}``` is the universal name that is used in GitHub Release.
+# Library-reservation-updater
+
+[![Build status (GitHub)](https://img.shields.io/github/workflow/status/qhy040404/Library-reservation-updater/Compile-CI/master?label=Compile&logo=github&cacheSeconds=600)](https://github.com/qhy040404/Library-reservation-updater/actions)
+[![CodeFactor](https://www.codefactor.io/repository/github/qhy040404/Library-reservation-updater/badge)](https://www.codefactor.io/repository/github/qhy040404/Library-reservation-updater)
+[![Github last commit date](https://img.shields.io/github/last-commit/qhy040404/Library-reservation-updater.svg?label=Updated&logo=github&cacheSeconds=600)](https://github.com/qhy040404/Library-reservation-updater/commits)
+[![License](https://img.shields.io/github/license/qhy040404/Library-reservation-updater.svg?label=License&logo=github&cacheSeconds=2592000)](https://github.com/qhy040404/Library-reservation-updater/blob/master/LICENSE)
+
+![GitHub top language](https://img.shields.io/github/languages/top/qhy040404/Library-reservation-updater)
+
+## Template / 模板
+&nbsp;&nbsp;&nbsp;&nbsp;[Updater-template](https://github.com/qhy040404/Updater-Template)
+
+## Parameter / 参数
+- 用户可修改的参数仅限于```channel```参数
+    - ```stable```为稳定版
+    - ```beta```为预发行版本
+        > 大不了bug横飞
