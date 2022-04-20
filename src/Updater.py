@@ -4,6 +4,7 @@ import sys
 import platform
 import zipfile
 import requests
+import urllib3
 import json
 import wget
 
@@ -20,6 +21,7 @@ s = requests.session()
 s.headers = {
     'Accept': 'application/vnd.github.v3+json'
 }
+urllib3.disable_warnings()
 
 # initialize consts
 github_release_api_url1 = 'https://api.github.com/repos/qhy040404/DLUT-library-auto-reservation/releases'
@@ -61,15 +63,15 @@ if remoteVer1 == mainver and remoteVer2 == configGeneratorver and remoteVer3 == 
 else:
     print('One or more modules\' newer version has been released.')
     print()
-    if remoteVer1 is not mainver:
+    if remoteVer1 != mainver:
         print('New: main: ' + remoteVer1)
         print(json.loads(response1).get('body'))
         print()
-    if remoteVer2 is not configGeneratorver:
+    if remoteVer2 != configGeneratorver:
         print('New: configGenerator: ' + remoteVer2)
         print(json.loads(response2).get('body'))
         print()
-    if remoteVer3 is not Updaterver:
+    if remoteVer3 != Updaterver:
         print('New: Updater: ' + remoteVer3)
         print(json.loads(response3).get('body'))
         print()
@@ -92,7 +94,7 @@ else:
     else:
         print('Unknown system')
 
-    if remoteVer1 is not mainver:
+    if remoteVer1 != mainver:
         download_url = 'https://github.com/qhy040404/DLUT-library-auto-reservation/releases/download/' + remoteVer1 + '/Library-' + sysType + '.zip'
         path = 'temp.zip'
         try:
@@ -102,7 +104,7 @@ else:
             print(e)
             sys.exit()
     else:
-        if remoteVer2 is not configGeneratorver:
+        if remoteVer2 != configGeneratorver:
             download_url = 'https://github.com/qhy040404/Library-reservation-configGenerator/releases/download/' + remoteVer1 + '/ConfigGenerator-' + sysType + '.zip'
             path = 'temp.zip'
             try:
@@ -111,7 +113,7 @@ else:
                 print('Error')
                 print(e)
                 sys.exit()
-        if remoteVer3 is not Updaterver:
+        if remoteVer3 != Updaterver:
             download_url = 'https://github.com/qhy040404/Library-reservation-updater/releases/download/' + remoteVer1 + '/Updater-' + sysType + '.zip'
             path = 'temp.zip'
             try:
