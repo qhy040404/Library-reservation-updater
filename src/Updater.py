@@ -86,8 +86,6 @@ else:
     if updateChoice == 'Y' or updateChoice == 'y':
         os.mkdir('update')
         updateConf.update(main = remoteVer1, configGenerator = remoteVer2, Updater = remoteVer3)
-        with open("update/config.json","w") as conf:
-            json.dump(updateConf, conf)
     else:
         sys.exit()
 
@@ -133,6 +131,11 @@ else:
     un_zip('temp.zip')
     if os.path.exists('update/config.conf'):
         os.remove('update/config.conf')
+    if os.path.exists('update/config.json'):
+        os.remove('update/config.json')
+    with open("update/config.json","w") as conf:
+        json.dump(updateConf, conf)
+
     print()
 
     if sysType == 'win':
