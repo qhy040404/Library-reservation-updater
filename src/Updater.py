@@ -26,8 +26,8 @@ s.headers = {
 urllib3.disable_warnings()
 
 # initialize consts
-github_release_api_url1 = 'https://api.github.com/repos/qhy040404/DLUT-library-auto-reservation/releases'
-github_release_api_url2 = 'https://api.github.com/repos/qhy040404/Library-reservation-configGenerator/releases'
+github_release_api_url1 = 'https://api.github.com/repos/qhy040404/DLUT-library-auto-reservation/releases/latest'
+github_release_api_url2 = 'https://api.github.com/repos/qhy040404/Library-reservation-configGenerator/releases/latest'
 github_release_api_url3 = 'https://api.github.com/repos/qhy040404/Library-reservation-updater/releases/latest'
 
 # delete old files
@@ -38,15 +38,6 @@ if os.path.exists('update'):
 with open("config.json","r") as conf:
     updateConf = json.load(conf)
     conf.close()
-
-if updateConf.get('channel') == 'stable':
-    github_release_api_url1 += '/latest'
-    github_release_api_url2 += '/latest'
-elif updateConf.get('channel') == 'beta':
-    github_release_api_url1 += '?per_page=1'
-    github_release_api_url2 += '?per_page=1'
-else:
-    print('Unknown channel.')
 
 mainver = updateConf.get('main')
 configGeneratorver = updateConf.get('configGenerator')
