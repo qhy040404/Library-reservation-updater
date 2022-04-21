@@ -63,6 +63,7 @@ else:
     if remoteVer1 != mainver:
         print('New: main: ' + remoteVer1)
         print(json.loads(response1).get('body'))
+        print('Usually the following updates are included in main update.')
         print()
     if remoteVer2 != configGeneratorver:
         print('New: configGenerator: ' + remoteVer2)
