@@ -7,6 +7,10 @@
 
 ![GitHub top language](https://img.shields.io/github/languages/top/qhy040404/Library-reservation-updater)
 
+主项目在此 [qhy040404/DLUT-library-auto-reservation](https://github.com/qhy040404/DLUT-library-auto-reservation)
+
+Main project here [qhy040404/DLUT-library-auto-reservation](https://github.com/qhy040404/DLUT-library-auto-reservation)
+
 ## Template / 模板
 &nbsp;&nbsp;&nbsp;&nbsp;[Updater-template](https://github.com/qhy040404/Updater-Template)
 
