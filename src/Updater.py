@@ -77,7 +77,7 @@ else:
     updateChoice = input('Update?(Y/N)')
     if updateChoice == 'Y' or updateChoice == 'y':
         os.mkdir('update')
-        if updateConf.has_key('channel'):
+        if 'channel' in updateConf:
             updateConf.pop('channel')
         updateConf.update(main = remoteVer1, configGenerator = remoteVer2, Updater = remoteVer3)
     else:
