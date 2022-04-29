@@ -77,7 +77,8 @@ else:
     updateChoice = input('Update?(Y/N)')
     if updateChoice == 'Y' or updateChoice == 'y':
         os.mkdir('update')
-        updateConf.pop('channel')
+        if updateConf.has_key('channel'):
+            updateConf.pop('channel')
         updateConf.update(main = remoteVer1, configGenerator = remoteVer2, Updater = remoteVer3)
     else:
         sys.exit()
