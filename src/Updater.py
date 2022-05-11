@@ -20,6 +20,7 @@ def un_zip(file_name):
         zip_file.extract(names, 'update/')
     zip_file.close()
 
+
 # initialize session
 s = requests.session()
 s.headers = {
@@ -37,7 +38,7 @@ if os.path.exists('update'):
     shutil.rmtree('update')
 
 # read config.json
-with open("config.json","r") as conf:
+with open("config.json", "r") as conf:
     updateConf = json.load(conf)
     conf.close()
 
@@ -45,13 +46,13 @@ mainver = updateConf.get('main')
 configGeneratorver = updateConf.get('configGenerator')
 Updaterver = updateConf.get('Updater')
 
-response1 = s.get(github_release_api_url1, verify = False).text.strip('[]')
+response1 = s.get(github_release_api_url1, verify=False).text.strip('[]')
 remoteVer1 = json.loads(response1).get('tag_name')
 
-response2 = s.get(github_release_api_url2, verify = False).text.strip('[]')
+response2 = s.get(github_release_api_url2, verify=False).text.strip('[]')
 remoteVer2 = json.loads(response2).get('tag_name')
 
-response3 = s.get(github_release_api_url3, verify = False).text.strip('[]')
+response3 = s.get(github_release_api_url3, verify=False).text.strip('[]')
 remoteVer3 = json.loads(response3).get('tag_name')
 
 # compare local and remote
@@ -81,7 +82,7 @@ else:
         os.mkdir('update')
         if 'channel' in updateConf:
             updateConf.pop('channel')
-        updateConf.update(main = remoteVer1, configGenerator = remoteVer2, Updater = remoteVer3)
+        updateConf.update(main=remoteVer1, configGenerator=remoteVer2, Updater=remoteVer3)
     else:
         sys.exit()
 
@@ -123,13 +124,12 @@ else:
                 print(e)
                 sys.exit()
 
-
     un_zip('temp.zip')
     if os.path.exists('update/config.conf'):
         os.remove('update/config.conf')
     if os.path.exists('update/config.json'):
         os.remove('update/config.json')
-    with open("update/config.json","w") as conf:
+    with open("update/config.json", "w") as conf:
         json.dump(updateConf, conf)
 
     print()
