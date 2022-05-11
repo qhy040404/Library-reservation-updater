@@ -1,14 +1,16 @@
 # import
+import json
 import os
-import sys
 import platform
-import time
 import shutil
+import sys
+import time
 import zipfile
+
 import requests
 import urllib3
-import json
 import wget
+
 
 # define func
 def un_zip(file_name):
