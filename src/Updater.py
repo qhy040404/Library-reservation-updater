@@ -11,6 +11,8 @@ import requests
 import urllib3
 import wget
 
+from SemanticVer import SemanticVer
+
 
 # define func
 def un_zip(file_name):
@@ -42,38 +44,38 @@ with open("config.json", "r") as conf:
     updateConf = json.load(conf)
     conf.close()
 
-mainver = updateConf.get('main')
-configGeneratorver = updateConf.get('configGenerator')
-Updaterver = updateConf.get('Updater')
+main_ver = SemanticVer(updateConf.get('main'))
+config_generator_ver = SemanticVer(updateConf.get('configGenerator'))
+updater_ver = SemanticVer(updateConf.get('Updater'))
 
 response1 = s.get(github_release_api_url1, verify=False).text.strip('[]')
-remoteVer1 = json.loads(response1).get('tag_name')
+remoteVer1 = SemanticVer(json.loads(response1).get('tag_name'))
 
 response2 = s.get(github_release_api_url2, verify=False).text.strip('[]')
-remoteVer2 = json.loads(response2).get('tag_name')
+remoteVer2 = SemanticVer(json.loads(response2).get('tag_name'))
 
 response3 = s.get(github_release_api_url3, verify=False).text.strip('[]')
-remoteVer3 = json.loads(response3).get('tag_name')
+remoteVer3 = SemanticVer(json.loads(response3).get('tag_name'))
 
 # compare local and remote
-if remoteVer1 == mainver and remoteVer2 == configGeneratorver and remoteVer3 == Updaterver:
+if remoteVer1 == main_ver and remoteVer2 == config_generator_ver and remoteVer3 == updater_ver:
     print('You have the latest release.')
     time.sleep(2)
     sys.exit()
 else:
     print('One or more modules\' newer version has been released.')
     print()
-    if remoteVer1 != mainver:
-        print('New: main: ' + remoteVer1)
+    if remoteVer1 > main_ver:
+        print('New: main: ' + remoteVer1.to_string())
         print(json.loads(response1).get('body'))
         print('Usually the following updates are included in main update.')
         print()
-    if remoteVer2 != configGeneratorver:
-        print('New: configGenerator: ' + remoteVer2)
+    if remoteVer2 > config_generator_ver:
+        print('New: configGenerator: ' + remoteVer2.to_string())
         print(json.loads(response2).get('body'))
         print()
-    if remoteVer3 != Updaterver:
-        print('New: Updater: ' + remoteVer3)
+    if remoteVer3 > updater_ver:
+        print('New: Updater: ' + remoteVer3.to_string())
         print(json.loads(response3).get('body'))
         print()
 
@@ -94,9 +96,10 @@ else:
         sysType = 'osx'
     else:
         print('Unknown system')
+        sys.exit()
 
-    if remoteVer1 != mainver:
-        download_url = 'https://github.com/qhy040404/DLUT-library-auto-reservation/releases/download/' + remoteVer1 + '/Library-' + sysType + '.zip'
+    if remoteVer1 > main_ver:
+        download_url = 'https://github.com/qhy040404/DLUT-library-auto-reservation/releases/download/' + remoteVer1.to_gh_tag() + '/Library-' + sysType + '.zip'
         path = 'temp.zip'
         try:
             wget.download(download_url, path)
@@ -105,8 +108,8 @@ else:
             print(e)
             sys.exit()
     else:
-        if remoteVer2 != configGeneratorver:
-            download_url = 'https://github.com/qhy040404/Library-reservation-configGenerator/releases/download/' + remoteVer2 + '/ConfigGenerator-' + sysType + '.zip'
+        if remoteVer2 > config_generator_ver:
+            download_url = 'https://github.com/qhy040404/Library-reservation-configGenerator/releases/download/' + remoteVer2.to_gh_tag() + '/ConfigGenerator-' + sysType + '.zip'
             path = 'temp.zip'
             try:
                 wget.download(download_url, path)
@@ -114,8 +117,8 @@ else:
                 print('Error')
                 print(e)
                 sys.exit()
-        if remoteVer3 != Updaterver:
-            download_url = 'https://github.com/qhy040404/Library-reservation-updater/releases/download/' + remoteVer3 + '/Updater-' + sysType + '.zip'
+        if remoteVer3 > updater_ver:
+            download_url = 'https://github.com/qhy040404/Library-reservation-updater/releases/download/' + remoteVer3.to_gh_tag() + '/Updater-' + sysType + '.zip'
             path = 'temp.zip'
             try:
                 wget.download(download_url, path)
